@@ -1,0 +1,36 @@
+name: Check IPs in AbuseIPDB
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Ejecuta el script todos los días a medianoche UTC
+  workflow_dispatch:  # Permite ejecutar manualmente el workflow
+
+jobs:
+  check_ips:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Instalar dependencias
+        run: pip install requests PyGithub
+
+      - name: Ejecutar script de verificación
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ABUSEIPDB_API_KEY: ${{ secrets.ABUSEIPDB_API_KEY }}
+        run: python check_ips.py
+
+      - name: Subir cambios si hay modificaciones
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add filtered_ips.txt
+          git diff --quiet && git diff --staged --quiet || git commit -m "Actualización automática de IPs filtradas"
+          git push
