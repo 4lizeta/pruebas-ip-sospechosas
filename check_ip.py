@@ -8,7 +8,7 @@ from github import Github
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # Token de GitHub
 REPO_NAME = "josesanchezaligo/pruebas-ip-sospechosas"  # Repositorio
 IP_FILE = "lista_50.txt"
-OUTPUT_FILE = "filtered_ips.txt"
+OUTPUT_FILE = "ip_sospechosas.txt"
 
 # Claves API de AbuseIPDB
 ABUSEIPDB_API_KEYS = list(filter(None, [
