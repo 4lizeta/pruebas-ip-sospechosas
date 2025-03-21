@@ -42,8 +42,7 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
-          git pull --rebase  # Trae los últimos cambios antes de hacer commit
-          
+          git pull --rebase  # Trae los últimos cambios antes de hacer commit          
           git add -A  # Asegura que se agreguen todos los archivos
 
           # Verificar si hay cambios antes de hacer commit
