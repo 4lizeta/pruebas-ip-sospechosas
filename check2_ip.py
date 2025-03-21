@@ -47,9 +47,9 @@ def check_ip(ip):
         url = "https://api.abuseipdb.com/api/v2/check"
         headers = {"Key": api_key, "Accept": "application/json"}
         params = {"ipAddress": ip, "verbose": ""}
-        
+
         response = requests.get(url, headers=headers, params=params)
-        
+
         if response.status_code == 200:
             return response.json().get("data", {}).get("abuseConfidenceScore", 0)
         elif response.status_code == 429:  # Límite de consultas
@@ -64,7 +64,7 @@ def check_ip(ip):
 
 def filter_ips(ips):
     """Filtrar IPs con un score mayor a 75"""
-    filtered_ips = [ip for ip in ips if (score := check_ip(ip)) is not None and score > 75]
+    filtered_ips = [ip for ip in ips if (score := check_ip(ip)) is not None and score > 60]
     return filtered_ips
 
 def update_github_file(filtered_ips):
