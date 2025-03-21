@@ -25,7 +25,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ABUSEIPDB_API_KEY: ${{ secrets.ABUSEIPDB_API_KEY }}
-        run: python check_ips.py
+        run: python check_ip.py
 
       - name: Subir cambios si hay modificaciones
         run: |
