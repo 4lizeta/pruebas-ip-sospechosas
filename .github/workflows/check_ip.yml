@@ -23,7 +23,7 @@ jobs:
 
       - name: Crear archivo si no existe
         run: |
-          touch filtered_ips.txt  # Crea el archivo vacío si no existe
+          touch filtered_ips.txt  # Crea el archivo si no existe
           git add filtered_ips.txt  # Asegura que Git lo rastree
 
       - name: Ejecutar script de verificación
@@ -41,7 +41,11 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add -A  # Asegura que se agreguen nuevos archivos          
+
+          git pull --rebase  # Trae los últimos cambios antes de hacer commit
+          
+          git add -A  # Asegura que se agreguen todos los archivos
+
           # Verificar si hay cambios antes de hacer commit
           git diff --staged --quiet || (
             git commit -m "🔄 Actualización automática de IPs filtradas"
