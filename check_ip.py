@@ -7,7 +7,7 @@ from github import Github
 # Configuración
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # Token de GitHub
 REPO_NAME = "josesanchezaligo/pruebas-ip-sospechosas"  # Repositorio
-IP_FILE = "lista_200.txt"
+IP_FILE = "lista_50.txt"
 OUTPUT_FILE = "filtered_ips.txt"
 
 # Claves API de AbuseIPDB
@@ -71,26 +71,37 @@ def update_github_file(filtered_ips):
     """Actualizar el archivo en GitHub"""
     g = Github(GITHUB_TOKEN)
     repo = g.get_repo(REPO_NAME)
+    
+    # Crear contenido a escribir
+    new_content = "\n".join(filtered_ips)
+    
+    # Verificar si el archivo existe
     try:
         file_content = repo.get_contents(OUTPUT_FILE)
         existing_ips = file_content.decoded_content.decode("utf-8").split("\n")
         sha = file_content.sha
     except:
+        print(f"⚠️ {OUTPUT_FILE} no existe. Será creado.")
         existing_ips, sha = [], None
 
-    new_content = "\n".join(filtered_ips)
-    
-    if existing_ips != filtered_ips:
-        if sha:
-            repo.update_file(OUTPUT_FILE, "Actualización de IPs filtradas", new_content, sha)
-        else:
-            repo.create_file(OUTPUT_FILE, "Creación de archivo con IPs filtradas", new_content)
-        print("✅ Archivo actualizado en GitHub.")
-    else:
+    # Si el contenido no ha cambiado, no actualizar
+    if existing_ips == filtered_ips:
         print("✅ No hay cambios en las IPs.")
+        return
+
+    # Si el archivo ya existe, actualizarlo
+    if sha:
+        repo.update_file(OUTPUT_FILE, "Actualización de IPs filtradas", new_content, sha)
+    else:
+        repo.create_file(OUTPUT_FILE, "Creación de archivo con IPs filtradas", new_content)
+    
+    print("✅ Archivo actualizado en GitHub.")
 
 if __name__ == "__main__":
     ips = get_ips_from_github()
     if ips:
         filtered_ips = filter_ips(ips)
-        update_github_file(filtered_ips)
+        if filtered_ips:
+            update_github_file(filtered_ips)
+        else:
+            print("⚠️ No se encontraron IPs sospechosas para actualizar.")
