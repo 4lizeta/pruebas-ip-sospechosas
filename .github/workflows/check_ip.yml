@@ -33,7 +33,7 @@ jobs:
           ABUSEIPDB_API_KEY_2: ${{ secrets.ABUSEIPDB_API_KEY_2 }}
           ABUSEIPDB_API_KEY_3: ${{ secrets.ABUSEIPDB_API_KEY_3 }}
           ABUSEIPDB_API_KEY_4: ${{ secrets.ABUSEIPDB_API_KEY_4 }}
-        run: python check_ip.py
+        run: python check2_ip.py
 
       - name: Subir cambios si hay modificaciones
         env:
