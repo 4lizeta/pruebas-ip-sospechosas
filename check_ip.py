@@ -7,7 +7,7 @@ from github import Github
 # Configuración
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # Token de GitHub
 REPO_NAME = "josesanchezaligo/pruebas-ip-sospechosas"  # Repositorio
-IP_FILE = "lista_50.txt"
+IP_FILE = "lista_10.txt"
 OUTPUT_FILE = "ip_sospechosas.txt"
 
 # Claves API de AbuseIPDB
@@ -47,9 +47,9 @@ def check_ip(ip):
         url = "https://api.abuseipdb.com/api/v2/check"
         headers = {"Key": api_key, "Accept": "application/json"}
         params = {"ipAddress": ip, "verbose": ""}
-        
+
         response = requests.get(url, headers=headers, params=params)
-        
+
         if response.status_code == 200:
             return response.json().get("data", {}).get("abuseConfidenceScore", 0)
         elif response.status_code == 429:  # Límite de consultas
@@ -64,17 +64,15 @@ def check_ip(ip):
 
 def filter_ips(ips):
     """Filtrar IPs con un score mayor a 75"""
-    filtered_ips = [ip for ip in ips if (score := check_ip(ip)) is not None and score > 75]
+    filtered_ips = [ip for ip in ips if (score := check_ip(ip)) is not None and score > 60]
     return filtered_ips
 
 def update_github_file(filtered_ips):
     """Actualizar el archivo en GitHub"""
     g = Github(GITHUB_TOKEN)
     repo = g.get_repo(REPO_NAME)
-    
     # Crear contenido a escribir
     new_content = "\n".join(filtered_ips)
-    
     # Verificar si el archivo existe
     try:
         file_content = repo.get_contents(OUTPUT_FILE)
@@ -94,7 +92,6 @@ def update_github_file(filtered_ips):
         repo.update_file(OUTPUT_FILE, "Actualización de IPs filtradas", new_content, sha)
     else:
         repo.create_file(OUTPUT_FILE, "Creación de archivo con IPs filtradas", new_content)
-    
     print("✅ Archivo actualizado en GitHub.")
 
 if __name__ == "__main__":
