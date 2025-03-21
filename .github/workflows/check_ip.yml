@@ -3,7 +3,7 @@ name: Check IPs in AbuseIPDB
 on:
   schedule:
     - cron: '0 0 * * *'  # Ejecuta el script todos los días a medianoche UTC
-  workflow_dispatch:  # Permite ejecutar manualmente el workflow
+  workflow_dispatch:  # Permite ejecución manual desde GitHub Actions
 
 jobs:
   check_ips:
@@ -24,7 +24,9 @@ jobs:
       - name: Ejecutar script de verificación
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ABUSEIPDB_API_KEY: ${{ secrets.ABUSEIPDB_API_KEY }}
+          ABUSEIPDB_API_KEY_1: ${{ secrets.ABUSEIPDB_API_KEY_1 }}
+          ABUSEIPDB_API_KEY_2: ${{ secrets.ABUSEIPDB_API_KEY_2 }}
+          ABUSEIPDB_API_KEY_3: ${{ secrets.ABUSEIPDB_API_KEY_3 }}
         run: python check_ip.py
 
       - name: Subir cambios si hay modificaciones
