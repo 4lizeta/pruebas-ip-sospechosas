@@ -27,12 +27,19 @@ jobs:
           ABUSEIPDB_API_KEY_1: ${{ secrets.ABUSEIPDB_API_KEY_1 }}
           ABUSEIPDB_API_KEY_2: ${{ secrets.ABUSEIPDB_API_KEY_2 }}
           ABUSEIPDB_API_KEY_3: ${{ secrets.ABUSEIPDB_API_KEY_3 }}
+          ABUSEIPDB_API_KEY_4: ${{ secrets.ABUSEIPDB_API_KEY_4 }}
         run: python check_ip.py
 
       - name: Subir cambios si hay modificaciones
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git add filtered_ips.txt
-          git diff --quiet && git diff --staged --quiet || git commit -m "Actualización automática de IPs filtradas"
-          git push
+          if git diff --staged --quiet; then
+            echo "✅ No hay cambios en el archivo. No se realiza commit."
+          else
+            git commit -m "🔄 Actualización automática de IPs filtradas"
+            git push
+          fi
